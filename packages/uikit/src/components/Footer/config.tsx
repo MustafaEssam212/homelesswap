@@ -1,6 +1,16 @@
 import { Language } from "../LangSelector/types";
 import { FooterLinkType } from "./types";
-import { TwitterIcon, TelegramIcon, RedditIcon, InstagramIcon, GithubIcon, DiscordIcon, YoutubeIcon,LanguageIcon,FacebookIcon } from "../Svg";
+import {
+  TwitterIcon,
+  TelegramIcon,
+  RedditIcon,
+  InstagramIcon,
+  GithubIcon,
+  DiscordIcon,
+  YoutubeIcon,
+  LanguageIcon,
+  FacebookIcon,
+} from "../Svg";
 
 export const footerLinks: FooterLinkType[] = [
   {
@@ -8,7 +18,7 @@ export const footerLinks: FooterLinkType[] = [
     items: [
       {
         label: "Contact",
-        href: "https://www.homelesstokens.com/",
+        href: "https://www.homelessexchange.com/",
       },
       {
         label: "Blog",
@@ -80,25 +90,20 @@ export const socials = [
   {
     label: "Twitter",
     icon: TwitterIcon,
-    href: "https://twitter.com/HOMELESS TOKEN@",
+    href: "https://x.com/Homelesswap",
   },
   {
     label: "Telegram",
     icon: TelegramIcon,
-    href: "https://t.me/+zcLIHe9ZgrkwYTg0",
-   
+    href: "https://t.me/homelesswa",
   },
-  {
-    label: "Facebook",
-    icon: FacebookIcon,
-    href: "https://www.facebook.com/profile.php?id=100084522925146",
-  },
+
   {
     label: "Website",
     icon: LanguageIcon,
-    href: "https://www.homelesstokens.com/",
+    href: "https://www.homelessexchange.com/",
   },
- /*  {
+  /*  {
     label: "Github",
     icon: GithubIcon,
     href: "#",

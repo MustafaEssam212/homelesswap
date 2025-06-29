@@ -5,6 +5,7 @@ interface NoChartAvailableProps {
   token0Address: string
   token1Address: string
   isMobile: boolean
+  pairAddress: any
 }
 
 const NoChartAvailable: React.FC<React.PropsWithChildren<NoChartAvailableProps>> = ({

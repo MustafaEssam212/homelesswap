@@ -27,7 +27,7 @@ export const swapSectionData = (t: TranslateFunction): SalesSectionProps => ({
 
 export const earnSectionData = (t: TranslateFunction): SalesSectionProps => ({
   headingText: t('Earn passive income with crypto.'),
-  bodyText: t('Homeleswap makes it easy to make your crypto work for you.'),
+  bodyText: t('Homelesswap makes it easy to make your crypto work for you.'),
   reverse: true,
   primaryButton: {
     to: '/farms',
@@ -50,7 +50,7 @@ export const earnSectionData = (t: TranslateFunction): SalesSectionProps => ({
 })
 
 export const cakeSectionData = (t: TranslateFunction): SalesSectionProps => ({
-  headingText: t('Homeleswap makes our world go round.'),
+  headingText: t('Homelesswap makes our world go round.'),
   bodyText: t(
     'Homeleswap token is at the heart of the Homeleswap ecosystem. Buy it, win it, farm it, spend it, stake it... heck, you can even vote with it!',
   ),

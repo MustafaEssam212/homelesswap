@@ -27,13 +27,55 @@ import { ASSET_CDN } from 'config/constants/endpoints'
 
 import { ChainLogo } from './Logo/ChainLogo'
 
+// Commented out Solana wallet type declarations
+/*
+declare global {
+  interface Window {
+    solana?: {
+      isPhantom?: boolean
+      connect(): Promise<{ publicKey: { toString(): string } }>
+      disconnect(): Promise<void>
+      signTransaction(transaction: any): Promise<any>
+    }
+  }
+}
+*/
+
+// Commented out Aptos and Solana chain definitions
+/*
 const AptosChain = {
   id: 1,
   name: 'Aptos',
 }
 
+const SolanaChain = {
+  id: 101,
+  name: 'Solana',
+}
+*/
+
 const NetworkSelect = ({ switchNetwork, chainId }) => {
   const { t } = useTranslation()
+
+  // Commented out Solana wallet connection function
+  /*
+  const handleSolanaConnect = async () => {
+    try {
+      if (window.solana && window.solana.isPhantom) {
+        const response = await window.solana.connect()
+        console.log('Solana wallet connected:', response.publicKey.toString())
+        alert(`Solana wallet connected: ${response.publicKey.toString()}`)
+      } else {
+        window.open('https://phantom.app/', '_blank')
+        alert('Phantom wallet required. Please install Phantom wallet.')
+      }
+    } catch (error) {
+      console.error('Solana connection error:', error)
+      alert('Error connecting Solana wallet.')
+    }
+  }
+  */
+
   return (
     <>
       <Box px="16px" py="8px">
@@ -44,7 +86,6 @@ const NetworkSelect = ({ switchNetwork, chainId }) => {
         .filter(
           (chain) =>
            !('testnet' in chain && chain.testnet) || chain.id === chainId,
-
         )  
         .map((chain) => (
           <UserMenuItem
@@ -58,6 +99,7 @@ const NetworkSelect = ({ switchNetwork, chainId }) => {
             </Text>
           </UserMenuItem>
         ))}
+      {/* Commented out Aptos and Solana menu items
       <UserMenuItem
         key={`aptos-${AptosChain.id}`}
         style={{ justifyContent: 'flex-start' }}
@@ -76,6 +118,23 @@ const NetworkSelect = ({ switchNetwork, chainId }) => {
           {AptosChain.name}
         </Text>
       </UserMenuItem>
+      <UserMenuItem
+        key={`solana-${SolanaChain.id}`}
+        style={{ justifyContent: 'flex-start' }}
+        onClick={handleSolanaConnect}
+      >
+        <Image
+          src="/solana-logo.png"
+          width={24}
+          height={24}
+          unoptimized
+          alt={`chain-solana-${SolanaChain.id}`}
+        />{' '}
+        <Text color="text" pl="12px">
+          {SolanaChain.name}
+        </Text>
+      </UserMenuItem>
+      */}
     </>
   )
 }
@@ -84,7 +143,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId }) => {
   const { t } = useTranslation()
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t(
-      'The URL you are accessing (Chain id: %chainId%) belongs to %network%; mismatching your wallet’s network. Please switch the network to continue.',
+      'The URL you are accessing (Chain id: %chainId%) belongs to %network%; mismatching your wallet\'s network. Please switch the network to continue.',
       {
         chainId,
         network: chains.find((c) => c.id === chainId)?.name ?? 'Unknown network',

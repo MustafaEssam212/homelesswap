@@ -7,23 +7,18 @@ export const footerLinks: (t: ContextApi["t"]) => FooterLinkType[] = (t) => [
     items: [
       {
         label: t("Contact"),
-        href: "https://www.homelesstokens.com",
+        href: "https://www.homelessexchange.com/",
    
       },
       {
         label: t("audit"),
-        href: "https://drive.google.com/file/d/1Xi5sWN-QJLgbQ4FBPE96svrtOWRlyQwH/view?usp=sharing",
+        href: "https://drive.google.com/file/d/1CMmBkVVLX72DDJkogTf7esC80yrvbBqn/view?usp=drive_link",
    
-      },
-      {
-        label: t("kyc"),
-        href: "https://drive.google.com/file/d/1gIS84uztmh7DskaRimQx8YFdMwpiQbYx/view?usp=sharing ",
-        
       },
      
       {
         label: t("Litepaper"),
-        href: "https://www.homelesstokens.com/p/whitepaper.html",
+        href: "https://www.homelessexchange.com/p/whitepaper.html",
       }
      
     ],

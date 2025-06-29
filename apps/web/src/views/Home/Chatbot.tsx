@@ -1,132 +1,148 @@
-import styles from './style.module.css'; // Import your CSS styles
-import React, { useState } from 'react';
+import styles from './style.module.css';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Chatbot: React.FC<React.PropsWithChildren> = () => {
+interface Message {
+  type: 'visitor' | 'operator';
+  text: string;
+}
 
-
-  const [isChatOpen, setChatOpen] = useState(false);
-
-  const toggleChat = () => {
-    setChatOpen(!isChatOpen);
-  };
-
+const Chatbot: React.FC = () => {
+  const [isChatOpen, setChatOpen] = useState(true); // Set to true by default to always show chat
   const [userInput, setUserInput] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [connectionError, setConnectionError] = useState('');
 
-  const handleInputChange = (event) => {
-    setUserInput(event.target.value);
+  // Initial greeting when component mounts
+  useEffect(() => {
+    setMessages([{ 
+      type: 'operator', 
+      text: 'Hi! My name is Sam. How can I help you today?' 
+    }]);
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInput(e.target.value);
+    if (connectionError) setConnectionError('');
   };
-  const sendMessage2 = async () => {console.log('fi')}
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isLoading) {
+      sendMessage();
+    }
+  };
 
+  const sendMessage = async () => {
+    const trimmedInput = userInput.trim();
+    if (!trimmedInput || isLoading) return;
 
-    /*   const sendMessage = async () => {
-        if (userInput.trim() !== '') {
-          // Update the messages state with the new user message
-          setMessages([...messages, { type: 'user', text: userInput }]);
-          // Reset the user input
-          setUserInput('');
-    
-          try {
-            console.log('inside');
-            // Make API request using Axios
-            const response = await axios.post('http://127.0.0.1:5000/predict', {
-              message: userInput,
-            }, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-          
-            const data = response.data;
-            console.log(data);
-            const prediction = data.answer;
-          
-            // Update the messages state with the API response
-            setMessages([...messages, { type: 'bot', text: prediction }]);
+    // Add user message immediately
+    const userMessage = { type: 'visitor' as const, text: trimmedInput };
+    setMessages(prev => [...prev, userMessage]);
+    setUserInput('');
+    setIsLoading(true);
 
-           console.log(messages);
+    try {
+      const response = await axios.post('http://localhost:5000/predict', {
+        message: trimmedInput,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000
+      });
 
-
-          } catch (error) {
-            console.error('Error making API request:', error);
-          }
+      if (response.data?.answer) {
+        setMessages(prev => [...prev, { 
+          type: 'operator', 
+          text: response.data.answer 
+        }]);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      
+      let errorMessage = 'Sorry, I encountered an error. Please try again.';
+      
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          errorMessage = `Server error: ${error.response.status}`;
+        } else if (error.request) {
+          errorMessage = 'Cannot connect to the server. Is your backend running?';
+          setConnectionError('Cannot connect to backend server');
+        } else {
+          errorMessage = error.message;
         }
-      }; */
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
 
-      const sendMessage = async () => {
-        if (userInput.trim() !== '') {
-          try {
-            console.log('inside');
-            // Make API request using Axios
-            const response = await axios.post('http://127.0.0.1:5000/predict', {
-              message: userInput,
-            }, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-      
-            const data = response.data;
-            console.log(data);
-            const prediction = data.answer;
-      
-            // Update the messages state with the new user message and the API response
-            setMessages([...messages, { type: 'visitor', text: userInput }, { type: 'operator', text: prediction }]);
-          } catch (error) {
-            console.error('Error making API request:', error);
-          }
-      
-          // Reset the user input
-          setUserInput('');
-        }
-      };
-    
-  
-
-
+      setMessages(prev => [...prev, { 
+        type: 'operator', 
+        text: errorMessage 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.chatbox}>
-{/*       <div className={`${styles.chatbox__support} ${styles['chatbox--active']}`}> */}
-       <div className={`${styles.chatbox__support} ${isChatOpen ? styles['chatbox--active'] : ''}`}> 
+        {/* Always show chat - removed toggle condition */}
+        <div className={`${styles.chatbox__support} ${styles['chatbox--active']}`}>
           <div className={styles.chatbox__header}>
             <div className={styles['chatbox__image--header']}>
-              <img src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" alt="image" />
+              <img 
+                src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" 
+                alt="Chatbot avatar" 
+              />
             </div>
             <div className={styles['chatbox__content--header']}>
               <h4 className={styles['chatbox__heading--header']}>Chat support</h4>
-              <p className={styles['chatbox__description--header']}>Hi. My name is Sam. How can I help you?</p>
+              <p className={styles['chatbox__description--header']}>
+                {connectionError || 'Hi! How can I help you today?'}
+              </p>
             </div>
           </div>
+
           <div className={styles['chatbox__messages']}>
-            <div>
-
             {messages.map((message, index) => (
-            <div key={index} className={`${styles['messages__item']} ${styles[`messages__item--${message.type}`]}`}>
-              {message.text}
-            </div>
-          ))}
-
-
-            </div>
+              <div 
+                key={index} 
+                className={`${styles['messages__item']} ${styles[`messages__item--${message.type}`]}`}
+              >
+                {message.text}
+                {message.type === 'operator' && index === messages.length - 1 && isLoading && (
+                  <span className={styles.typing_indicator}>...</span>
+                )}
+              </div>
+            ))}
           </div>
+
           <div className={styles['chatbox__footer']}>
-            <input type="text" placeholder="Write a message..."  value={userInput}
-            onChange={handleInputChange}
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={userInput}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading}
             />
-            <button    className={`${styles['chatbox__send--footer']} ${styles['send__button']}`}
-            onClick={sendMessage}>Send</button>
+            <button
+              className={`${styles['chatbox__send--footer']} ${styles['send__button']}`}
+              onClick={sendMessage}
+              disabled={isLoading || !userInput.trim()}
+            >
+              {isLoading ? 'Sending...' : 'Send'}
+            </button>
           </div>
         </div>
-        <div className={styles['chatbox__button']}>
-          <button onClick={toggleChat}><img src="/images/chatbox-icon.svg" /></button>
-        </div>
+
+        {/* Removed the chat toggle button completely */}
       </div>
     </div>
   );
-}
+};
 
-export default Chatbot
+export default Chatbot;

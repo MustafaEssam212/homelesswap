@@ -126,9 +126,24 @@ const Hero = () => {
         mt={[account && chainId === ChainId.BSC ? '280px' : '50px', null, 0]}
         id="homepage-hero"
       >
-        <Flex flex="1" flexDirection="column">
-          <Heading scale="xxl" color="secondary" mb="24px">
-            {t('homeleswap.')}
+          <Flex flex="1" flexDirection="column" >
+          <Heading 
+            scale="xl" 
+            color="secondary" 
+            mb="24px"
+            style={{
+              textTransform: 'uppercase',
+              fontWeight: '900',
+              color: '#FFD700',
+              textShadow: '0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.3)',
+              background: 'linear-gradient(135deg, #FFD700, #FFED4A)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '0.05em',
+            }}
+          >
+            {t('homelesswap')}
           </Heading>
           <Heading scale="md" mb="24px">
             {t('Trade, earn, and win crypto on the most popular decentralized platform in the galaxy.')}

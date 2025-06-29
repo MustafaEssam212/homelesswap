@@ -6,7 +6,7 @@
 "plugins": ["lodash", "address"],
 "extends": ["@pancakeswap/eslint-config-pancake", "plugin:react/jsx-runtime"],
 "rules": {
-  "address/addr-type": ["warn", "checksum"],
+  "address/addr-type": "off",
   "no-empty-function": 0,
   "no-restricted-syntax": 0,
   "import/no-unresolved": 0,

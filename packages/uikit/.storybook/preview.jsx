@@ -29,7 +29,7 @@ const StyledThemeProvider = (props) => {
 
 const StorybookThemeProvider = (props) => {
   return (
-    <NextThemeProvider>
+    <NextThemeProvider defaultTheme="dark">
       <StyledThemeProvider {...props} />
     </NextThemeProvider>
   );

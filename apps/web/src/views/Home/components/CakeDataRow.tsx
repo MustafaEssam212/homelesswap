@@ -2,8 +2,8 @@ import { useIntersectionObserver } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { ChainId } from '@pancakeswap/sdk'
 import { bscTokens } from '@pancakeswap/tokens'
-import { Balance, Flex, Heading, Skeleton, Text } from '@pancakeswap/uikit'
-import { formatBigInt, formatLocalisedCompactNumber, formatNumber } from '@pancakeswap/utils/formatBalance'
+import { Balance, Flex, Heading, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { formatBigInt, formatLocalisedCompactNumber } from '@pancakeswap/utils/formatBalance'
 import { cakeVaultV2ABI } from '@pancakeswap/pools'
 import { SLOW_INTERVAL } from 'config/constants'
 import { useEffect, useState } from 'react'
@@ -40,45 +40,39 @@ const StyledColumn = styled(Flex)<{ noMobileBorder?: boolean; noDesktopBorder?: 
        `}
 `
 
-const Grid = styled.div`
+const Grid = styled.div<{ isMobile: boolean }>`
   display: grid;
-  grid-gap: 16px 8px;
+  grid-gap: ${({ isMobile }) => (isMobile ? '12px' : '16px')};
   margin-top: 24px;
-  grid-template-columns: repeat(2, auto);
-  grid-template-areas:
-    'a d'
-    'b e'
-    'c f';
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    grid-gap: 16px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.md} {
-    grid-template-areas:
-      'a b c'
-      'd e f';
-    grid-gap: 32px;
-    grid-template-columns: repeat(3, auto);
-  }
+  grid-template-columns: ${({ isMobile }) => (isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)')};
+  grid-template-areas: ${({ isMobile }) =>
+    isMobile
+      ? `'a d'
+         'b e'
+         'c f'`
+      : `'a b c'
+         'd e f'`};
 `
 
-/**
- * User (Planet Finance) built a contract on top of our original manual CAKE pool,
- * but the contract was written in such a way that when we performed the migration from Masterchef v1 to v2, the tokens were stuck.
- * These stuck tokens are forever gone (see their medium post) and can be considered out of circulation."
- * https://planetfinanceio.medium.com/pancakeswap-works-with-planet-to-help-cake-holders-f0d253b435af
- * https://twitter.com/PancakeSwap/status/1523913527626702849
- * https://bscscan.com/tx/0xd5ffea4d9925d2f79249a4ce05efd4459ed179152ea5072a2df73cd4b9e88ba7
- */
-const planetFinanceBurnedTokensWei = 637407922445268000000000n
-const cakeVaultAddress = getCakeVaultAddress()
+const MobileGridItem = styled(Flex)<{ area: string }>`
+  grid-area: ${({ area }) => area};
+  flex-direction: column;
+  padding: 12px;
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 16px;
+`
+
+const DesktopGridItem = styled(Flex)<{ area: string }>`
+  grid-area: ${({ area }) => area};
+  flex-direction: column;
+`
 
 const CakeDataRow = () => {
   const { t } = useTranslation()
   const { observerRef, isIntersecting } = useIntersectionObserver()
   const [loadData, setLoadData] = useState(false)
   const emissionsPerBlock = useCakeEmissionPerBlock(loadData)
+  const { isMobile } = useMatchBreakpoints()
 
   const {
     data: { cakeSupply, burnedBalance, circulatingSupply } = {
@@ -129,59 +123,93 @@ const CakeDataRow = () => {
     }
   }, [isIntersecting])
 
+  const GridItem = isMobile ? MobileGridItem : DesktopGridItem
+
   return (
-    <Grid>
-      <Flex flexDirection="column" style={{ gridArea: 'a' }}>
-        <Text color="textSubtle">{t('Total Supply')}</Text>
+    <Grid isMobile={isMobile}>
+      <GridItem area="a">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('Total Supply')}
+        </Text>
         {circulatingSupply ? (
-          <Balance decimals={0} lineHeight="1.1" fontSize="24px" bold value={1000000000} />
+          <Balance decimals={0} lineHeight="1.1" fontSize={isMobile ? '18px' : '24px'} bold value={1000000000} />
         ) : (
-          <Skeleton height={24} width={126} my="4px" />
+          <Skeleton height={24} width={isMobile ? '100%' : 126} my="4px" />
         )}
-      </Flex>
-      <StyledColumn noMobileBorder style={{ gridArea: 'b' }}>
-        <Text color="textSubtle">{t('Token Decimal')}</Text>
+      </GridItem>
+
+      <GridItem area="b">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('Token Decimal')}
+        </Text>
         {cakeSupply ? (
-          <Balance decimals={0} lineHeight="1.1" fontSize="24px" bold value={18} />
+          <Balance decimals={0} lineHeight="1.1" fontSize={isMobile ? '18px' : '24px'} bold value={18} />
         ) : (
           <>
             <div ref={observerRef} />
-            <Skeleton height={24} width={126} my="4px" />
+            <Skeleton height={24} width={isMobile ? '100%' : 126} my="4px" />
           </>
         )}
-      </StyledColumn>
-      <StyledColumn noMobileBorder style={{ gridArea: 'c' }}>
-        <Text color="textSubtle">{t('PRESALE 40%')}</Text>
+      </GridItem>
 
-       {/*  <Balance decimals={0} lineHeight="1.1" fontSize="24px" bold value={750000000} /> */}
-      </StyledColumn>
-      <StyledColumn noDesktopBorder style={{ gridArea: 'd' }}>
-        <Text color="textSubtle">{t('LIQUIDITY 27%')}</Text>
+      <GridItem area="c">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('PRESALE 40%')}
+        </Text>
+        {isMobile ? (
+          <Text bold fontSize="18px">
+            400,000,000
+          </Text>
+        ) : (
+          <Text bold fontSize="24px">
+            400,000,000
+          </Text>
+        )}
+      </GridItem>
+
+      <GridItem area="d">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('LIQUIDITY 27%')}
+        </Text>
         {mcap?.gt(0) && mcapString ? (
-          <Heading scale="lg">{"For Liquidity: 274,400,000"}</Heading>
+          <Text bold fontSize={isMobile ? '16px' : '20px'}>
+            274,400,000
+          </Text>
         ) : (
-          <Skeleton height={24} width={126} my="4px" />
+          <Skeleton height={24} width={isMobile ? '100%' : 126} my="4px" />
         )}
-      </StyledColumn>
-      <StyledColumn style={{ gridArea: 'e' }}>
-        <Text color="textSubtle">{t('TOKEN SALE 33%')}</Text>
-        {burnedBalance ? (
-          <Heading scale="lg">{"For Presale: 400,000,000"}</Heading>
-        ) : (
-          <Skeleton height={24} width={126} my="4px" />
-        )}
-      </StyledColumn>
-      <StyledColumn style={{ gridArea: 'f' }}>
-        <Text color="textSubtle">{t('CONTRACT')}</Text>
+      </GridItem>
 
-        {emissionsPerBlock ? (
-          <Heading scale="lg">{"0x299F467665e1870A705099AA5a0F11520df026bC"}</Heading>
+      <GridItem area="e">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('TOKEN SALE 33%')}
+        </Text>
+        {burnedBalance ? (
+          <Text bold fontSize={isMobile ? '16px' : '20px'}>
+            400,000,000
+          </Text>
         ) : (
-          <Skeleton height={24} width={126} my="4px" />
+          <Skeleton height={24} width={isMobile ? '100%' : 126} my="4px" />
         )}
-      </StyledColumn>
+      </GridItem>
+
+      <GridItem area="f">
+        <Text color="textSubtle" fontSize={isMobile ? '14px' : '16px'} mb={isMobile ? '4px' : '8px'}>
+          {t('CONTRACT')}
+        </Text>
+        {emissionsPerBlock ? (
+          <Text bold fontSize={isMobile ? '12px' : '16px'} style={{ wordBreak: 'break-all' }}>
+            {'0x299F467665e1870A705099AA5a0F11520df026bC'}
+          </Text>
+        ) : (
+          <Skeleton height={24} width={isMobile ? '100%' : 126} my="4px" />
+        )}
+      </GridItem>
     </Grid>
   )
 }
+
+const planetFinanceBurnedTokensWei = 637407922445268000000000n
+const cakeVaultAddress = getCakeVaultAddress()
 
 export default CakeDataRow

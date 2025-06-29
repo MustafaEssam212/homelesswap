@@ -83,32 +83,15 @@ const Stats = () => {
     <Flex justifyContent="center" alignItems="center" flexDirection="column">
     {/*   <GradientLogo height="48px" width="48px" mb="24px" /> */}
 
-      <img
-              src="/images/homless.png"
-              alt="homleswap"
-              width="48px" height="48px"
-             
-            />
-      <Heading textAlign="center" scale="xl">
-        {t('Used by millions.')}
-      </Heading>
-      <Heading textAlign="center" scale="xl" mb="32px">
-        {t('Trusted with billions.')}
-      </Heading>
-      <Text textAlign="center" color="textSubtle">
-        {t('Homeleswap has the most users of any decentralized platform, ever.')}
-      </Text>
-      <Flex flexWrap="wrap">
-        <Text display="inline" textAlign="center" color="textSubtle" mb="20px">
-          {entrusting}
-          <>{tvl ? <>{tvlString}</> : <Skeleton display="inline-block" height={16} width={70} mt="2px" />}</>
-          {inFunds}
-        </Text>
-      </Flex>
+    <img
+  src="/images/homless.png"
+  alt="homlesswap"
+  width="150px"
+  height="150px"
+  style={{ margin: '0 0 30px 0' }} // 12px vertical, 0 horizontal
+/>
+  
 
-      <Text textAlign="center" color="textSubtle" bold mb="32px">
-        {t('Will you join them?')}
-      </Text>
 
 
       <ChainTags />

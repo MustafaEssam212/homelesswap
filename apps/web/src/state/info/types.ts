@@ -84,16 +84,16 @@ export interface PoolData {
   volumeUSDWeek: number
   volumeOutUSDWeek?: number
   volumeUSDChangeWeek: number
-
-  totalFees24h: number
-  totalFees7d: number
-  lpFees24h: number
-  lpFees7d: number
-  lpApr7d: number
-
+  aprMonth?: number
+  totalFees24h?: number
+  totalFees7d?: number
+  lpFees24h?: number
+  lpFees7d?: number
+  lpApr7d?: number
+  aprWeek?: number
   liquidityUSD: number
   liquidityUSDChange: number
-
+  apr24h?: number
   token0Price: number
   token1Price: number
 
